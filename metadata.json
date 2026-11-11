@@ -1,0 +1,6 @@
+{
+  "name": "DevSetup AI",
+  "description": "Universal student software setup, environment management, and intelligent troubleshooting agent.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
