@@ -49,8 +49,18 @@ export const TroubleshooterView: React.FC<TroubleshooterViewProps> = ({ localSca
           localScan: localScan || undefined,
         }),
       });
-      const data = await res.json();
-      if (!res.ok) throw new Error(data.error || 'Troubleshooting failed.');
+      const rawText = await res.text();
+      let data: any;
+      try {
+        data = JSON.parse(rawText);
+      } catch {
+        throw new Error(
+          rawText.trim().startsWith('<')
+            ? 'The server returned an HTML page instead of JSON. Please refresh the page (or redeploy if using the Shared URL) and try again.'
+            : `Unexpected server response (${res.status}): ${rawText.slice(0, 140)}`
+        );
+      }
+      if (!res.ok) throw new Error(data?.error || 'Troubleshooting failed.');
       setResult(data);
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Failed to analyze error.');

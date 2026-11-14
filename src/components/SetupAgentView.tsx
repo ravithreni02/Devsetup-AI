@@ -82,9 +82,19 @@ export const SetupAgentView: React.FC<SetupAgentViewProps> = ({
           localScan: localScan || undefined,
         }),
       });
-      const data = await res.json();
+      const rawText = await res.text();
+      let data: any;
+      try {
+        data = JSON.parse(rawText);
+      } catch {
+        throw new Error(
+          rawText.trim().startsWith('<')
+            ? 'The server returned an HTML page instead of JSON. Please refresh the page (or redeploy if using the Shared URL) and try again.'
+            : `Unexpected server response (${res.status}): ${rawText.slice(0, 140)}`
+        );
+      }
       if (!res.ok) {
-        throw new Error(data.error || 'Failed to analyze requirements.');
+        throw new Error(data?.error || 'Failed to analyze requirements.');
       }
       setResult(data);
 

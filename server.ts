@@ -1112,6 +1112,18 @@ if (nonilionSession) {
 }
 
 async function startServer() {
+  app.use('/api', (_req, res) => {
+    res.status(404).json({ error: 'API route not found.' });
+  });
+
+  app.use((err: unknown, req: express.Request, res: express.Response, next: express.NextFunction) => {
+    if (req.path.startsWith('/api/')) {
+      res.status(500).json({ error: err instanceof Error ? err.message : 'Internal server error.' });
+      return;
+    }
+    next(err);
+  });
+
   if (process.env.NODE_ENV !== 'production') {
     const { createServer: createViteServer } = await import('vite');
     const vite = await createViteServer({

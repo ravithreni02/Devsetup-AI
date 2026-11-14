@@ -31,7 +31,8 @@ export const CompanionView: React.FC<CompanionViewProps> = ({
   const fetchNonilionStatus = async () => {
     try {
       const res = await fetch('/api/nonilion/status');
-      if (res.ok) {
+      const ct = res.headers.get('content-type') || '';
+      if (res.ok && ct.includes('application/json')) {
         setNonilionStatus(await res.json());
       }
     } catch {
@@ -56,9 +57,19 @@ export const CompanionView: React.FC<CompanionViewProps> = ({
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ code: pairCode.trim() }),
       });
-      const data = await res.json();
-      if (!res.ok || !data.ok) {
-        throw new Error(data.error || 'Pairing failed.');
+      const rawText = await res.text();
+      let data: any;
+      try {
+        data = JSON.parse(rawText);
+      } catch {
+        throw new Error(
+          rawText.trim().startsWith('<')
+            ? 'The server returned HTML instead of JSON. Please refresh the page or redeploy.'
+            : `Unexpected response (${res.status}).`
+        );
+      }
+      if (!res.ok || !data?.ok) {
+        throw new Error(data?.error || 'Pairing failed.');
       }
       setPairCode('');
       await fetchNonilionStatus();
