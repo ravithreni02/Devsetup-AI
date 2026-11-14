@@ -6,3 +6,5 @@ coverage/
 *.log
 .env*
 !.env.example
+.nonilion-session.json
+.nonilion-scan.json

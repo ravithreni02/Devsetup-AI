@@ -60,6 +60,11 @@ export default function App() {
   useEffect(() => {
     if (localScan) {
       localStorage.setItem('devsetup_local_scan', JSON.stringify(localScan));
+      fetch('/api/companion/sync-scan', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(localScan),
+      }).catch(() => {});
     }
   }, [localScan]);
 

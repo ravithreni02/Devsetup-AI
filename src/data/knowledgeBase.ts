@@ -1,4 +1,4 @@
-import { SoftwareCatalogItem } from '../types/devsetup';
+import type { SoftwareCatalogItem } from '../types/devsetup.ts';
 
 export const SOFTWARE_KNOWLEDGE_BASE: SoftwareCatalogItem[] = [
   // 1. Programming Languages & Runtimes
